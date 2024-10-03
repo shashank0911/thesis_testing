@@ -13,9 +13,9 @@ s_k, s_k_next, v_k, v_k_next = sp.symbols('s_k s_k_next v_k v_k_next')
 # Modified implementation; doesn't start from midpoint
 t_p1 = t - k*T - T/2
 t_p2 = t - k*T - T/2
-x1 = (s_k + v_k * (t - k*T) + 
+x1 = (s_k + v_k * (t - k*T) - 
       (v_k_next - v_k) / T**2 * t_p1**3 * (1 + 2*t_p1/T))
-x2 = (s_k + v_k * (t - k*T) +
+x2 = (s_k + v_k * (t - k*T) -
       (v_k_next - v_k) / T**2 * t_p2**3 * (1 - 2*t_p2/T)) 
 x = sp.Piecewise(
     (x1, sp.And(t >= k*T, t < (k+0.5)*T)),

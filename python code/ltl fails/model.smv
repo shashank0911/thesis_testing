@@ -1,0 +1,23 @@
+MODULE main
+VAR
+    state: {c_11, c_12, c_13, c_21, c_22, c_23};
+
+DEFINE
+    base := state = c_11;
+    goal := state = c_23;
+    danger := state = c_13;
+
+ASSIGN
+    init(state) := c_11;
+
+    next(state) := case
+        state = c_11 : {c_12, c_21};
+        state = c_12 : {c_11, c_13, c_22};
+        state = c_13 : {c_12, c_23};
+        state = c_21 : {c_11, c_22};
+        state = c_22 : {c_21, c_12, c_23};
+        state = c_23 : {c_22, c_13};
+    esac;
+
+LTLSPEC
+    !(G F (state = c_11))

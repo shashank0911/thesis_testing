@@ -31,9 +31,10 @@ Qf = Q
 
 weight = Weight(Q, R, Qf)
 
-Kp = 30 * np.eye(2)
-Kd = 5 * np.eye(2)
-sigma = 5
+#Kp=52, Kd=1.1, sigma=36: e=[-0.0007, -0.006]
+Kp = 52 * np.eye(2)
+Kd = 1.1 * np.eye(2)
+sigma = 36
 
 vmax = np.array([30, 30])
 vmin = np.array([-30, -30])
@@ -63,9 +64,13 @@ robots = Robots(idList, x0List, t_vals, cellDict)
 robots.initialise_mid_level_system(dim)
 robots.initialise_low_level_system()
 
-motionPlan1 = ["c_41", "c_42"]
+# motionPlan1 = ["c_41", "c_42", "c_32", "c_31", "c_21"]
 # motionPlan2 = ["c_11", "c_12", "c_22", "c_32"]
 # motionPlan3 = ["c_24", "c_25", "c_35", "c_45", "c_44", "c_34", "c_24"]
+
+motionPlan1 = ["c_41", "c_42"]
+# motionPlan2 = ["c_11", "c_12"]
+# motionPlan3 = ["c_24", "c_25"]
 
 robots.robotList[0].topSystem = TopLevelSystem(motionPlan1)
 # robots.robotList[1].topSystem = TopLevelSystem(motionPlan2)
@@ -74,15 +79,48 @@ robots.robotList[0].topSystem = TopLevelSystem(motionPlan1)
 robots.initialise_mid_level_control(weight, velocityConstraints, inputConstraints)
 robots.initialise_low_level_control(Kp, Kd, sigma)
 
-execTimeArr = np.zeros(simsteps)
+execTimeMid = np.zeros(simsteps)
 
 t = 0
 mid_layer_loop_time = t_vals.T_mid
 low_layer_loop_time = t_vals.T_low
-low_layer_time = time.perf_counter()
 mid_layer_time = time.perf_counter()
+low_layer_time = time.perf_counter()
 break_condition = False
 
+
+# Initialization 
+# start_time = time.perf_counter()
+# for i in range(robots.numRobots):
+
+#     if robots.robotList[i].midControl.terminate:
+#         sequencePair = robots.robotList[i].topSystem.get_sequence_pair()
+#         if robots.robotList[i].topSystem.terminate:
+#             if robots.robotList[i].midSystem.t < simsteps:
+#                 xc = np.concatenate([robots.robotList[i].midSystem.xc.flatten()[:2], np.zeros(2)])
+#                 # print(f"Loop number: {robots.robotList[i].midSystem.t+1}, Robot:{i+1}")
+#                 robots.robotList[i].midSystem.stateHistory[:, robots.robotList[i].midSystem.t] = xc
+#                 robots.robotList[i].midSystem.inputHistory[:, robots.robotList[i].midSystem.t] = np.zeros(2)
+#                 robots.robotList[i].midSystem.t += 1
+#             continue
+#         else:
+#             highLevelInput = robots.find_high_level_input(sequencePair)
+#             robots.robotList[i].midControl.get_constraints(highLevelInput)
+#             robots.robotList[i].midSystem.xf = highLevelInput[1].center
+#             robots.robotList[i].midControl.terminate = False
+
+# print(f"Loop number: {robots.robotList[i].midSystem.t+1}, Robot:{i+1}")
+# for i in range(robots.numRobots):
+#     # robots.robotList[i].lowSystem.k += 1
+#     if robots.robotList[i].midSystem.t < simsteps:
+#         robots.robotList[i].midSystem.get_mpc(robots.robotList[i].midControl)
+#         robots.robotList[i].midSystem.t += 1
+# elapsedTime = time.perf_counter() - start_time
+# execTimeMid[t] = elapsedTime
+# t += 1
+# # if robots.robotList[0].lowSystem.k == 0:
+# low_layer_start = time.perf_counter()
+# # Initialization end
 
 while not break_condition:
     
@@ -110,14 +148,16 @@ while not break_condition:
        
     if start_time - mid_layer_time >= mid_layer_loop_time:
         mid_layer_time = time.perf_counter()
-        print(f"Loop number: {robots.robotList[i].midSystem.t+1}, Robot:{i+1}")
+        # if robots.robotList[0].lowSystem.k == -1:
+        #     low_layer_start = time.perf_counter()
         for i in range(robots.numRobots):
+            print(f"Loop number: {robots.robotList[i].midSystem.t+1}, Robot:{i+1}")
             robots.robotList[i].lowSystem.k += 1
             if robots.robotList[i].midSystem.t < simsteps:
                 robots.robotList[i].midSystem.get_mpc(robots.robotList[i].midControl)
                 robots.robotList[i].midSystem.t += 1
         elapsedTime = time.perf_counter() - start_time
-        execTimeArr[t] = elapsedTime
+        execTimeMid[t] = elapsedTime
         t += 1
         if robots.robotList[0].lowSystem.k == 0:
             low_layer_start = time.perf_counter()
@@ -131,6 +171,7 @@ while not break_condition:
         for i in range(robots.numRobots):
             # if (robots.robotList[i].lowSystem.t + low_layer_loop_time) < (robots.robotList[0].lowSystem.k + 1) * (mid_layer_loop_time - low_buffer):
             robots.robotList[i].lowSystem.t = time.perf_counter() - low_layer_start
+            robots.robotList[i].lowSystem.k = int(robots.robotList[i].lowSystem.t / mid_layer_loop_time)
             # robots.robotList[i].lowSystem.t += low_layer_loop_time
             if robots.robotList[i].midSystem.t < simsteps:
                 robots.robotList[i].lowSystem.update_state(robots.robotList[i].lowControl, robots.robotList[i].midSystem.yc)
@@ -151,9 +192,9 @@ for i in range(robots.numRobots):
     stateHistoryLow = robots.robotList[i].lowSystem.stateHistory
     inputHistoryLow = robots.robotList[i].lowSystem.inputHistory
     trajectoryHistoryLow = robots.robotList[i].lowSystem.trajectoryHistory
-    print(np.shape(stateHistoryLow))
-    print(np.shape(inputHistoryLow))
-    print(np.shape(trajectoryHistoryLow))
+    # print(np.shape(stateHistoryLow))
+    # print(np.shape(inputHistoryLow))
+    # print(np.shape(trajectoryHistoryLow))
     stateHistoryLow = np.squeeze(stateHistoryLow).T
     inputHistoryLow = np.squeeze(inputHistoryLow).T
     trajectoryHistoryLow = np.squeeze(trajectoryHistoryLow).T
@@ -183,5 +224,5 @@ for key in cellDict:
 with open('robot_cell_data.pkl', 'wb') as f:
     pickle.dump({'robot_data': robotData, 'cell_data': cellData}, f)
 
-df = pd.DataFrame(execTimeArr, columns=["Execution Time"])
-df.to_csv("execTimeArr.csv", index=False)
+df = pd.DataFrame(execTimeMid, columns=["Execution Time"])
+df.to_csv("execTimeMid.csv", index=False)

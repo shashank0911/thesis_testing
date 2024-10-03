@@ -36,7 +36,8 @@ for key in cellData:
 plt.grid(True)
 plt.axis('auto')
 plt.legend(loc='upper right')
-plt.show()
+plt.savefig("evol_ideal.png")
+# plt.show()
 
 fig, ax = plt.subplots()
 
@@ -65,6 +66,7 @@ for i in range(robotData[f'numRobots']):
     ax.set_ylabel("Y coordinate")
     ax.set_title("MAS evolution")
 
+
 for key in cellData:
     constSet_A = cellData[key]['constraintPos_A']
     constSet_b = cellData[key]['constraintPos_b']
@@ -78,6 +80,7 @@ for key in cellData:
 plt.grid(True)
 plt.axis('auto')
 plt.legend(loc='upper right')
+plt.savefig("evol_true.png")
 plt.show()
 
 

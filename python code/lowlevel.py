@@ -8,7 +8,7 @@ class LowLevelSystem:
         self.x = x
         self.y = y
         self.theta = theta
-        self.v = 1
+        self.v = 0.1
         self.omega = 0
 
         self.t = 0
@@ -36,6 +36,7 @@ class LowLevelSystem:
         self.v += a * T
         self.omega += alpha * T 
         self.theta += self.omega * T
+        self.theta %= (2 * np.pi)
         self.x += self.v * np.cos(self.theta) * T
         self.y += self.v * np.sin(self.theta) * T
         # print("u: ", np.array([a*T, alpha*T]))
@@ -93,9 +94,9 @@ class LowLevelControl:
         t_p1 = self.t - self.k*self.T - self.T/2
         t_p2 = self.t - self.k*self.T - self.T/2
 
-        x1 = (self.sk + self.vk * (self.t - self.k*self.T) + 
+        x1 = (self.sk + self.vk * (self.t - self.k*self.T) - 
             (self.vkplus - self.vk) / self.T**2 * t_p1**3 * (1 + 2*t_p1/self.T))
-        x2 = (self.sk + self.vk * (self.t - self.k*self.T) +
+        x2 = (self.sk + self.vk * (self.t - self.k*self.T) -
             (self.vkplus - self.vk) / self.T**2 * t_p2**3 * (1 - 2*t_p2/self.T))
         xd = sp.Piecewise(
             (x1, sp.And(self.t >= self.k*self.T, self.t < (self.k+0.5)*self.T)),
