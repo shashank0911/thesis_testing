@@ -9,7 +9,7 @@ with open('robot_cell_data.pkl', 'rb') as f:
 robotData = data['robot_data']
 cellData = data['cell_data']
 
-fig, ax = plt.subplots()
+fig1, ax1 = plt.subplots()
 
 for i in range(robotData[f'numRobots']):
     stateHistoryMid = robotData[f'stateHistoryMid_{i}']
@@ -18,10 +18,10 @@ for i in range(robotData[f'numRobots']):
     y_data = stateHistoryMid[1, :]
 
     random_color = np.random.rand(3,)
-    ax.plot(x_data, y_data, '-', color=random_color, linewidth=2, markersize=10, marker='.', label=f'Robot {i+1}')
-    ax.set_xlabel("X coordinate")
-    ax.set_ylabel("Y coordinate")
-    ax.set_title("MAS evolution")
+    ax1.plot(x_data, y_data, '-', color=random_color, linewidth=2, markersize=10, marker='.', label=f'Robot {i+1}')
+    ax1.set_xlabel("X coordinate")
+    ax1.set_ylabel("Y coordinate")
+    ax1.set_title("MAS evolution")
 
 for key in cellData:
     constSet_A = cellData[key]['constraintPos_A']
@@ -30,8 +30,8 @@ for key in cellData:
     invSet_b = cellData[key]['invSet_b']
     constSet = Polytope(constSet_A, constSet_b)
     invSet = Polytope(invSet_A, invSet_b)
-    constSet.plot(ax=ax, color=[0.8, 0.8, 0.8], alpha=0.3, linewidth=1.5, edgecolor='k')
-    invSet.plot(ax=ax, color=[0.6, 0.6, 0.6], alpha=0.3, linewidth=1.5, edgecolor='k')
+    constSet.plot(ax=ax1, color=[0.8, 0.8, 0.8], alpha=0.3, linewidth=1.5, edgecolor='k')
+    invSet.plot(ax=ax1, color=[0.6, 0.6, 0.6], alpha=0.3, linewidth=1.5, edgecolor='k')
 
 plt.grid(True)
 plt.axis('auto')
@@ -39,7 +39,7 @@ plt.legend(loc='upper right')
 plt.savefig("evol_ideal.png")
 # plt.show()
 
-fig, ax = plt.subplots()
+fig2, ax2 = plt.subplots()
 
 for i in range(robotData[f'numRobots']):
     stateHistoryMid = robotData[f'stateHistoryMid_{i}']
@@ -58,13 +58,13 @@ for i in range(robotData[f'numRobots']):
 
     random_color = np.random.rand(3,)
     random_color_2 = np.random.rand(3,)
-    ax.scatter(x_data_mid, y_data_mid, color=random_color, label=f'Points from middle layer')
-    # ax.plot(x_data_mid, y_data_mid, '-', color=random_color, linewidth=2, label=f'Points from middle layer')
-    ax.plot(x_data_inter, y_data_inter, '-', color=random_color_2, linewidth=2, label=f'Interpolation')
-    ax.plot(x_data_low, y_data_low, '-', color=random_color, linewidth=2, label=f'Robot position')
-    ax.set_xlabel("X coordinate")
-    ax.set_ylabel("Y coordinate")
-    ax.set_title("MAS evolution")
+    ax2.scatter(x_data_mid, y_data_mid, color=random_color, label=f'Points from middle layer')
+    # ax2.plot(x_data_mid, y_data_mid, '-', color=random_color, linewidth=2, label=f'Points from middle layer')
+    ax2.plot(x_data_inter, y_data_inter, '-', color=random_color_2, linewidth=2, label=f'Interpolation')
+    ax2.plot(x_data_low, y_data_low, '-', color=random_color, linewidth=2, label=f'Robot position')
+    ax2.set_xlabel("X coordinate")
+    ax2.set_ylabel("Y coordinate")
+    ax2.set_title("MAS evolution")
 
 
 for key in cellData:
@@ -74,8 +74,8 @@ for key in cellData:
     invSet_b = cellData[key]['invSet_b']
     constSet = Polytope(constSet_A, constSet_b)
     invSet = Polytope(invSet_A, invSet_b)
-    constSet.plot(ax=ax, color=[0.8, 0.8, 0.8], alpha=0.3, linewidth=1.5, edgecolor='k')
-    invSet.plot(ax=ax, color=[0.6, 0.6, 0.6], alpha=0.3, linewidth=1.5, edgecolor='k')
+    constSet.plot(ax=ax2, color=[0.8, 0.8, 0.8], alpha=0.3, linewidth=1.5, edgecolor='k')
+    invSet.plot(ax=ax2, color=[0.6, 0.6, 0.6], alpha=0.3, linewidth=1.5, edgecolor='k')
 
 plt.grid(True)
 plt.axis('auto')

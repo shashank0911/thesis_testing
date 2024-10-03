@@ -15,10 +15,11 @@ class LowLevelSystem:
         self.k = -1
         # Sampling time of mid level system
         self.t_vals = t_vals
+        self.ct = 0
 
-        self.stateHistory = []
-        self.inputHistory = []
-        self.trajectoryHistory = []
+        self.stateHistory = np.zeros((5, t_vals.simsteps * t_vals.low_steps))
+        self.inputHistory = np.zeros((2, t_vals.simsteps * t_vals.low_steps))
+        self.trajectoryHistory = np.zeros((2, t_vals.simsteps * t_vals.low_steps))
 
         # self.a = 0
         # self.alpha = 0
@@ -40,9 +41,10 @@ class LowLevelSystem:
         self.x += self.v * np.cos(self.theta) * T
         self.y += self.v * np.sin(self.theta) * T
         # print("u: ", np.array([a*T, alpha*T]))
-        self.stateHistory.append(np.array([[self.x], [self.y], [self.theta], [self.v], [self.omega]]))
-        self.inputHistory.append(np.array([[a], [alpha]]))
-
+        # self.stateHistory.append(np.array([[self.x], [self.y], [self.theta], [self.v], [self.omega]]))
+        # self.inputHistory.append(np.array([[a], [alpha]]))
+        self.stateHistory[:, self.ct] = np.array([[self.x], [self.y], [self.theta], [self.v], [self.omega]]).flatten()
+        self.inputHistory[:, self.ct] = np.array([[a], [alpha]]).flatten()
 
 
 
@@ -155,6 +157,7 @@ class LowLevelControl:
         # print("u: ", u)
         # print('\n')
         # print(np.shape(xd))
-        lowSystem.trajectoryHistory.append(xd)
+        # lowSystem.trajectoryHistory.append(xd)
+        lowSystem.trajectoryHistory[:, lowSystem.ct] = xd.flatten()
         
         return ad, alphad

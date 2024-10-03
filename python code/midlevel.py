@@ -24,11 +24,12 @@ class Weight:
         self.Qf = Qf
 
 class Time:
-    def __init__(self, T_mid, low_steps):
+    def __init__(self, T_mid, low_steps, simsteps):
         self.T_mid = T_mid
         self.low_steps = low_steps
         self.T_low = self.T_mid / self.low_steps
         self.T_low_arr = np.linspace(0, self.T_mid, self.low_steps+1)
+        self.simsteps = simsteps
 
         
 
