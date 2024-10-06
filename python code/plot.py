@@ -9,7 +9,7 @@ with open('robot_cell_data.pkl', 'rb') as f:
 robotData = data['robot_data']
 cellData = data['cell_data']
 
-fig1, ax1 = plt.subplots()
+fig1, ax1 = plt.subplots(figsize=(10, 6))
 
 for i in range(robotData[f'numRobots']):
     stateHistoryMid = robotData[f'stateHistoryMid_{i}']
@@ -39,7 +39,7 @@ plt.legend(loc='upper right')
 plt.savefig("evol_ideal.png")
 # plt.show()
 
-fig2, ax2 = plt.subplots()
+fig2, ax2 = plt.subplots(figsize=(10, 6))
 
 for i in range(robotData[f'numRobots']):
     stateHistoryMid = robotData[f'stateHistoryMid_{i}']
@@ -60,8 +60,8 @@ for i in range(robotData[f'numRobots']):
     random_color_2 = np.random.rand(3,)
     ax2.scatter(x_data_mid, y_data_mid, color=random_color, label=f'Points from middle layer')
     # ax2.plot(x_data_mid, y_data_mid, '-', color=random_color, linewidth=2, label=f'Points from middle layer')
-    ax2.plot(x_data_inter, y_data_inter, '-', color=random_color_2, linewidth=2, label=f'Interpolation')
-    ax2.plot(x_data_low, y_data_low, '-', color=random_color, linewidth=2, label=f'Robot position')
+    ax2.plot(x_data_inter, y_data_inter, '-', color=random_color_2, linewidth=1.5, label=f'Interpolation')
+    ax2.plot(x_data_low, y_data_low, '-', color=random_color, linewidth=1.5, label=f'Robot position')
     ax2.set_xlabel("X coordinate")
     ax2.set_ylabel("Y coordinate")
     ax2.set_title("MAS evolution")

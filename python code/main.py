@@ -43,6 +43,13 @@ dvmax = np.array([5, 5])
 dvmin = np.array([-5, -5])
 Hv = np.vstack((np.eye(2), -np.eye(2)))
 hv = np.concatenate([vmax, -vmin])
+Hv = np.array([
+    [1, 1],
+    [1, -1],
+    [-1, 1],
+    [-1, -1]
+])
+hv = np.array([30, 30, 30, 30])
 Hdv = np.vstack((np.eye(2), -np.eye(2)))
 hdv = np.concatenate([dvmax, -dvmin])
 
@@ -69,7 +76,7 @@ robots.initialise_low_level_system()
 # motionPlan2 = ["c_11", "c_12", "c_22", "c_32"]
 # motionPlan3 = ["c_24", "c_25", "c_35", "c_45", "c_44", "c_34", "c_24"]
 
-motionPlan1 = ["c_41", "c_42", "c_43", "c_33", "c_34"]
+motionPlan1 = ["c_41", "c_42"]
 # motionPlan2 = ["c_11", "c_12"]
 # motionPlan3 = ["c_24", "c_25"]
 
@@ -152,8 +159,8 @@ while not break_condition:
             if robots.robotList[i].midSystem.t < simsteps:
                 robots.robotList[i].midSystem.get_mpc(robots.robotList[i].midControl)
                 robots.robotList[i].midSystem.t += 1
-        elapsedTime = time.perf_counter() - start_time
-        execTimeMid[t] = elapsedTime
+        elapsedTimeMid = time.perf_counter() - start_time
+        execTimeMid[t] = elapsedTimeMid
         t += 1
         if robots.robotList[0].lowSystem.k == 0:
             low_layer_start = time.perf_counter()
@@ -173,9 +180,9 @@ while not break_condition:
                 robots.robotList[i].lowSystem.update_state(robots.robotList[i].lowControl, robots.robotList[i].midSystem.yc)
                 robots.robotList[i].lowSystem.ct += 1
             
-        elapsedTime = time.perf_counter() - low_layer_time
-        idx = int(robots.robotList[i].lowSystem.t / low_layer_loop_time)
-        execTimeLow[idx] = elapsedTime
+        elapsedTimeLow = time.perf_counter() - low_layer_time
+        idx = robots.robotList[i].lowSystem.ct
+        execTimeLow[idx-1] = elapsedTimeLow
 
 
     # break_condition = all(robots.robotList[i].midSystem.t > simsteps-1 for i in range(robots.numRobots))
@@ -202,11 +209,11 @@ for i in range(robots.numRobots):
     stateHistoryLow = robots.robotList[i].lowSystem.stateHistory
     inputHistoryLow = robots.robotList[i].lowSystem.inputHistory
     trajectoryHistoryLow = robots.robotList[i].lowSystem.trajectoryHistory
-    print(np.shape(stateHistoryLow))
-    print(np.shape(inputHistoryLow))
-    print(np.shape(trajectoryHistoryLow))
-    print(np.shape(stateHistoryMid))
-    print(np.shape(inputHistoryMid))
+    # print(np.shape(stateHistoryLow))
+    # print(np.shape(inputHistoryLow))
+    # print(np.shape(trajectoryHistoryLow))
+    # print(np.shape(stateHistoryMid))
+    # print(np.shape(inputHistoryMid))
     # stateHistoryLow = np.squeeze(stateHistoryLow).T
     # inputHistoryLow = np.squeeze(inputHistoryLow).T
     # trajectoryHistoryLow = np.squeeze(trajectoryHistoryLow).T
