@@ -16,10 +16,12 @@ from polytope import Polytope
 # print(y_data)
 
 
-x = np.array([True, False, False])
-print(x.all())
+# x = np.array([True, False, False])
+# print(x.all())
 
-
+theta = -np.pi/2
+theta = (theta + np.pi) % (2 * np.pi) - np.pi
+print(theta)
 
 
 
