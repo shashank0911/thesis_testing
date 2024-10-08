@@ -1,6 +1,7 @@
 import matlab.engine
 import numpy as np
 from polytope import Polytope, is_subset, projection
+import matplotlib.pyplot as plt
 
 class EnvCell:
     def __init__(self, i, j, xmin, xmax, ymin, ymax, sys, 
@@ -122,9 +123,5 @@ class EnvCell:
         # print(np.shape(self.controlInvariantSet.A))
         # print(np.shape(self.controlInvariantSet.b))
         eng.eval("clear", nargout=0)
-
-
-
-
 
         
