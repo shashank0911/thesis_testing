@@ -8,16 +8,17 @@ class LowLevelSystem:
         self.x = x
         self.y = y
         self.theta = theta
-        self.v = 0.1
+        self.v = 0.01
         self.omega = 0
 
         self.t = 0
-        self.k = -1
+        self.k = 0
         # Sampling time of mid level system
         self.t_vals = t_vals
         self.ct = 0
 
-        self.stateHistory = np.zeros((5, t_vals.simsteps * t_vals.low_steps))
+        self.stateHistory = np.zeros((5, t_vals.simsteps * t_vals.low_steps + 1))
+        self.stateHistory[:, 0] = np.array([[self.x], [self.y], [self.theta], [self.v], [self.omega]]).flatten()
         self.inputHistory = np.zeros((2, t_vals.simsteps * t_vals.low_steps))
         self.trajectoryHistory = np.zeros((2, t_vals.simsteps * t_vals.low_steps))
 
@@ -28,22 +29,23 @@ class LowLevelSystem:
         # Update k when midlevel goes to next step/loop
         # self.k = int(self.t/self.T)
         
-        sk = sp.Matrix(xm[4:6, 0].reshape(-1, 1))
-        vk = sp.Matrix(xm[6:8, 0].reshape(-1, 1))
-        vkplus = sp.Matrix(xm[10:12, 0].reshape(-1, 1))
+        sk = sp.Matrix(xm[0:2, 0].reshape(-1, 1))
+        vk = sp.Matrix(xm[2:4, 0].reshape(-1, 1))
+        vkplus = sp.Matrix(xm[6:8, 0].reshape(-1, 1))
         T = self.t_vals.T_low
 
         a, alpha = lowControl.fbl_control(self, sk, vk, vkplus)
         self.v += a * T
         self.omega += alpha * T 
         self.theta += self.omega * T
-        self.theta %= (2 * np.pi)
+        # self.theta %= (2 * np.pi)
+        self.theta = (self.theta + np.pi) % (2 * np.pi) - np.pi
         self.x += self.v * np.cos(self.theta) * T
         self.y += self.v * np.sin(self.theta) * T
         # print("u: ", np.array([a*T, alpha*T]))
         # self.stateHistory.append(np.array([[self.x], [self.y], [self.theta], [self.v], [self.omega]]))
         # self.inputHistory.append(np.array([[a], [alpha]]))
-        self.stateHistory[:, self.ct] = np.array([[self.x], [self.y], [self.theta], [self.v], [self.omega]]).flatten()
+        self.stateHistory[:, self.ct+1] = np.array([[self.x], [self.y], [self.theta], [self.v], [self.omega]]).flatten()
         self.inputHistory[:, self.ct] = np.array([[a], [alpha]]).flatten()
 
 
