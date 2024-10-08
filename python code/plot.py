@@ -18,7 +18,7 @@ for i in range(robotData[f'numRobots']):
     y_data = stateHistoryMid[1, :]
 
     random_color = np.random.rand(3,)
-    ax1.plot(x_data, y_data, '-', color=random_color, linewidth=2, markersize=10, marker='.', label=f'Robot {i+1}')
+    ax1.plot(x_data, y_data, '-', color='red', linewidth=2, markersize=10, marker='.', label=f'Robot {i+1}')
     ax1.set_xlabel("X coordinate")
     ax1.set_ylabel("Y coordinate")
     ax1.set_title("MAS evolution")
@@ -52,16 +52,17 @@ for i in range(robotData[f'numRobots']):
     y_data_low = stateHistoryLow[1, :]
     x_data_inter = trajectoryHistoryLow[0, :]
     y_data_inter = trajectoryHistoryLow[1, :]
-    # print(x_data_mid)
+    # print(f"Robot {i}",x_data_mid)
     # print(x_data_inter)
     # print(x_data_low)
 
     random_color = np.random.rand(3,)
     random_color_2 = np.random.rand(3,)
-    ax2.scatter(x_data_mid, y_data_mid, color=random_color, label=f'Points from middle layer')
+    random_color_3 = np.random.rand(3,)
+    ax2.scatter(x_data_mid, y_data_mid, color='red', label=f'Points from middle layer')
     # ax2.plot(x_data_mid, y_data_mid, '-', color=random_color, linewidth=2, label=f'Points from middle layer')
-    ax2.plot(x_data_inter, y_data_inter, '-', color=random_color_2, linewidth=1.5, label=f'Interpolation')
-    ax2.plot(x_data_low, y_data_low, '-', color=random_color, linewidth=1.5, label=f'Robot position')
+    ax2.plot(x_data_inter, y_data_inter, '-', color='green', linewidth=1.5, label=f'Interpolation')
+    ax2.plot(x_data_low, y_data_low, '-', color='blue', linewidth=1.5, label=f'Robot position')
     ax2.set_xlabel("X coordinate")
     ax2.set_ylabel("Y coordinate")
     ax2.set_title("MAS evolution")
