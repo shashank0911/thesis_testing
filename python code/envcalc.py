@@ -7,9 +7,9 @@ import matplotlib.pyplot as plt
 import matlab.engine
 import pickle
 
-n = 4
-m = 5
-T_mid = 0.5
+n = 6
+m = 4
+T_mid = 1.0
 
 cellDict = {}
 
@@ -17,10 +17,10 @@ cellDict = {}
 # xmax = 0.7
 # ymin = 1.5
 # ymax = -1.5
-env_xmin = -1.3
-env_xmax = 0.7
-env_ymin = -2.1
-env_ymax = 0.9
+env_xmin = 0.0
+env_xmax = 3.6
+env_ymin = 0.0
+env_ymax = 2.0
 delta = 0.03
 
 A = np.block([[np.eye(2), T_mid * np.eye(2)], [np.zeros((2, 2)), np.eye(2)]])
@@ -28,19 +28,19 @@ B = np.block([[np.zeros((2, 2))], [np.eye(2)]])
 C = np.array([[1, 0, 0, 0], [0, 1, 0, 0]])
 sys = DiscreteSystem(A, B, C)
 
-vmax = np.array([40, 40])/100
-vmin = np.array([-40, -40])/100
+# vmax = np.array([40, 40])/100
+# vmin = np.array([-40, -40])/100
 dvmax = np.array([5, 5])/100
 dvmin = np.array([-5, -5])/100
-Hv = np.vstack((np.eye(2), -np.eye(2)))
-hv = np.concatenate([vmax, -vmin])
+# Hv = np.vstack((np.eye(2), -np.eye(2)))
+# hv = np.concatenate([vmax, -vmin])
 Hv = np.array([
-    [1, 1],
-    [1, -1],
-    [-1, 1],
+    [ 1,  1],
+    [ 1, -1],
+    [-1,  1],
     [-1, -1]
 ])
-hv = np.array([40, 40, 40, 40])/100
+hv = np.array([50, 50, 50, 50])/100
 Hdv = np.vstack((np.eye(2), -np.eye(2)))
 hdv = np.concatenate([dvmax, -dvmin])
 

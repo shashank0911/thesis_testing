@@ -2,7 +2,7 @@ import networkx as nx
 import spot
 import pygraphviz as pgv
 
-n_rows = 2
+n_rows = 3
 n_cols = 3
 
 
@@ -23,17 +23,18 @@ for i in range(1, n_rows + 1):
         if j < n_cols:
             fts.add_edge(cur_cell, f'c_{i}{j+1}')
 
-# print("States: ", fts.nodes)
-# print("Transitions: ", list(fts.edges))
+print("States: ", fts.nodes)
+print("Transitions: ", list(fts.edges))
 
 init_state = 'c_11'
 labels = {
-    'c_11': 'base',
-    'c_13': 'goal',
-    'c_23': 'danger'
+    'c_11': 'b',
+    'c_13': 'd',
+    'c_23': 'd',
+    'c_32': 'g'
 }
 
-ltl = spot.formula('GF base & GF goal & G! danger')
+ltl = spot.formula('GF b & G! d')
 buchi_aut = spot.translate(ltl, 'Buchi', 'state-based', 'high')
 
 # print(buchi_aut.num_states())
@@ -50,6 +51,7 @@ def construct_product_automaton(fts, buchi_aut, labels):
     
     # 2. Determine initial states
     initial_states = [(init_state, buchi_aut.get_init_state_number())]
+    print(initial_states)
     
     # 3. Create transition relation  
     for fts_state in fts.nodes():
